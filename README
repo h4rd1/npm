@@ -16,3 +16,11 @@ Group: npm PGID:0 ID:0
 ❯ Starting nginx ...
 
 ❯ Starting backend ...
+
+
+
+docker_stack.file
+смени лейбл если надо 
+
+ placement:
+  constraints: [node.role == manager]
