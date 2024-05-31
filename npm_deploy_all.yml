@@ -4,12 +4,9 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
-      # These ports are in format <host-port>:<container-port>
-      - '80:80' # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '81:81' # Admin Web Port
-      # Add any other Stream port you want to expose
-      # - '21:21' # FTP
+      - '80:80'
+      - '81:81'
+      - '443:443'
     environment:
       # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
@@ -17,14 +14,19 @@ services:
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
-      # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
     volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
-    depends_on:
-      - db
+      - data:/data
+      - letsencrypt:/etc/letsencrypt
+    networks:
+      - npm
+      - ingress
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
+     
   db:
     image: 'jc21/mariadb-aria:latest'
     restart: unless-stopped
@@ -35,4 +37,25 @@ services:
       MYSQL_PASSWORD: 'npm'
       MARIADB_AUTO_UPGRADE: '1'
     volumes:
-      - ./mysql:/var/lib/mysql
+      - mysql:/var/lib/mysql
+    networks:
+      - npm
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+        
+ 
+networks:
+ npm:
+ ingress:
+  driver: overlay
+  attachable: true
+
+volumes:
+    data: 
+    letsencrypt: 
+    mysql:
+  
+
