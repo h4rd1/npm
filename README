@@ -25,6 +25,6 @@ docker_stack.file
  placement:
   constraints: [node.role == manager]
 
-
+docker network connect ingress container1
 
 Использовал оригинальные контейнеры автора. 
