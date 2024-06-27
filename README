@@ -24,3 +24,7 @@ docker_stack.file
 
  placement:
   constraints: [node.role == manager]
+
+
+
+Использовал оригинальные контейнеры автора. 
